@@ -1,5 +1,5 @@
 export const ROUTES = {
-  API: "/api",
+  HOME: "/",
 };
 
 export const STATUS_CODES = {

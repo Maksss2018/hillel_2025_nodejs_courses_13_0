@@ -5,7 +5,7 @@ import { configDotenv } from "dotenv";
 import connectDB from "./config/database.js";
 import { runServer } from "./config/serverRuntime.js";
 import homeRouter from "./routes/home.js";
-import { ROUTES } from "./common/index.js";
+import { ROUTES, STATUS_CODES, MESSAGES } from "./common/index.js";
 
 configDotenv();
 
@@ -17,7 +17,7 @@ app.use(
     optionsSuccessStatus: 200,
   }),
 );
-
+app.use(express.json());
 app.use(
   morgan("tiny", {
     skip: (req) => req.url.startsWith("/.well-known"),
@@ -25,7 +25,6 @@ app.use(
 );
 
 app.use(ROUTES.HOME, homeRouter);
-
 app.use((req, res) => {
   res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.NOT_FOUND);
 });

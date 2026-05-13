@@ -12,7 +12,12 @@ const citySchema = new mongoose.Schema(
       required: [true, "Content is required"],
       trim: true,
     },
-    comments: [{ type: mongoose.Schema.Types.ObjectId }],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        unique: true,
+      },
+    ],
   },
   {
     collection: "posts",

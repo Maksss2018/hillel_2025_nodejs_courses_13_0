@@ -1,22 +1,26 @@
 import mongoose from "mongoose";
 
-const citySchema = new mongoose.Schema(
+const CommentSchema = new mongoose.Schema(
   {
     text: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, "Text is required"],
+      minLength: [25, "your message should be over 25 s symbels"],
+      maxlength: 10000,
       trim: true,
     },
     post: {
       type: mongoose.Schema.Types.ObjectId,
+      unique: true,
+      ref: "Post",
+      required: true,
     },
   },
   {
     collection: "comments",
-    timestamps: true,
     optimisticConcurrency: true,
     versionKey: "__v",
   },
 );
 
-export default mongoose.model("Comment", citySchema);
+export default mongoose.model("Comment", CommentSchema);
