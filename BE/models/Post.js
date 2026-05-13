@@ -12,7 +12,7 @@ const postSchema = new mongoose.Schema(
     content: {
       type: String,
       required: [true, "Content is required"],
-      maxlength: [5000, "max size of content reached"],
+      maxlength: [5000, "max size of content reached "],
       trim: true,
     },
     comments: [
