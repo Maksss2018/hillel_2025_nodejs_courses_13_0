@@ -10,7 +10,10 @@ router.get("/list", async (req, res) => {
     const posts = await Post.find().lean();
 
     if (!posts.length) {
-      return res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.NOT_FOUND);
+      return res.json({
+        success: true,
+        posts: [],
+      });
     }
     console.log(posts);
     res.status(200).json(posts);
