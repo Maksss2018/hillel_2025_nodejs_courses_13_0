@@ -5,6 +5,7 @@ import { configDotenv } from "dotenv";
 import connectDB from "./config/database.js";
 import { runServer } from "./config/serverRuntime.js";
 import homeRouter from "./routes/home.js";
+import postsRouter from "./routes/posts.js";
 import { ROUTES, STATUS_CODES, MESSAGES } from "./common/index.js";
 
 configDotenv();
@@ -25,6 +26,7 @@ app.use(
 );
 
 app.use(ROUTES.HOME, homeRouter);
+app.use(ROUTES.POSTS, postsRouter);
 app.use((req, res) => {
   res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.NOT_FOUND);
 });
