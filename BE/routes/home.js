@@ -4,8 +4,6 @@ import { MESSAGES, STATUS_CODES } from "../common/index.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  //   const escapedCity = city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
   try {
     const posts = await Post.find().select("titel _id").limit(15).lean();
 
@@ -15,7 +13,6 @@ router.get("/", async (req, res) => {
         posts: [],
       });
     }
-    console.log(posts);
     res.status(STATUS_CODES.SUCCESS).json({
       success: true,
       posts,

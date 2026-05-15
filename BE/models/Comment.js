@@ -5,7 +5,7 @@ const CommentSchema = new mongoose.Schema(
     text: {
       type: String,
       required: [true, "Text is required"],
-      minLength: [25, "your message should be over 25 s symbels"],
+      minLength: [5, "your message should be over 5 s symbels"],
       maxlength: 10000,
       trim: true,
     },
