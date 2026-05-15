@@ -11,7 +11,7 @@ router.get("/list", async (req, res) => {
         path: "comments",
         select: "text -_id", // Includes text; explicitly excludes _id
       })*/
-      //.populate("comments", "text -_id")
+      .populate("comments", "text -_id")
       .limit(15)
       .lean();
 
