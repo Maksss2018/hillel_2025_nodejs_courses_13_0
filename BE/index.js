@@ -2,8 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import { configDotenv } from "dotenv";
-import mongoSanitize from "mongo-sanitize";
-
+import mongoSanitize from "express-mongo-sanitize";
 import connectDB from "./config/database.js";
 import { runServer } from "./config/serverRuntime.js";
 import homeRouter from "./routes/home.js";
@@ -27,16 +26,8 @@ app.use(
     skip: (req) => req.url.startsWith("/.well-known"),
   }),
 );
-app.use((req, res, next) => {
-  console.log(req.body);
-  req.safe = {
-    body: mongoSanitize(req.body || {}),
-    query: mongoSanitize(req.query || {}),
-    params: mongoSanitize(req.params || {}),
-  };
-  console.log(req.safe.body);
-  next();
-});
+
+app.use(mongoSanitize());
 
 app.use(ROUTES.HOME, homeRouter);
 app.use(ROUTES.POSTS, postsRouter);

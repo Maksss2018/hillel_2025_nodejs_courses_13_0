@@ -1,7 +1,6 @@
 export const ROUTES = {
   HOME: "/",
   POSTS: "/posts",
-  COMMENTS: "/comments",
 };
 
 export const STATUS_CODES = {

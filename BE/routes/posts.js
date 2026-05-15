@@ -40,40 +40,53 @@ router.post("/form/new_post", async (req, res) => {
   }
 });
 
-router.get("/list/of/comments", async (req, res) => {
+router.get("/list/of/comments/:post_id", async (req, res) => {
+  const postID = req.params.post_id;
   try {
-    const comments = await Comment.find().limit(15).lean();
+    const comments = await Comment.find({ post: postID }).limit(15).lean();
 
     if (!comments.length) {
       return res.json({
         success: true,
-        comments,
+        comments: [],
       });
     }
-    console.log(comments);
     res.status(200).json({
       success: true,
       comments,
     });
   } catch (err) {
-    console.error(err);
     res.status(STATUS_CODES.BAD_REQUEST).send(MESSAGES.BAD_REQUEST);
   }
 });
 
 router.post("/form/new_comment", async (req, res) => {
   try {
-    const dataFromBody = req.safe.body;
+    const dataFromBody = req.body;
     const comment = new Comment({
       text: dataFromBody.text,
       post: dataFromBody.postID,
     });
-    comment.save();
-    console.log("***********************");
-    console.log("comment ==", comment);
+
     await Post.findByIdAndUpdate(dataFromBody.postID, {
       $push: { comments: comment._id },
     });
+    res.status(200).send(comment);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("500");
+  }
+});
+
+router.post("/form/delete_comment", async (req, res) => {
+  try {
+    const dataFromBody = req.body;
+    const comment = await Comment.findByIdAndDelete(dataFromBody.commentID);
+
+    await Post.updateOne(
+      { _id: dataFromBody.postID },
+      { $pull: { comments: dataFromBody.commentID } },
+    );
     res.status(200).send(comment);
   } catch (err) {
     console.error(err);
