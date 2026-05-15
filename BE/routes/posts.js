@@ -6,7 +6,14 @@ const router = Router();
 
 router.get("/list", async (req, res) => {
   try {
-    const posts = await Post.find().limit(15).lean();
+    const posts = await Post.find()
+      /*.populate({
+        path: "comments",
+        select: "text -_id", // Includes text; explicitly excludes _id
+      })*/
+      .populate("comments", "text -_id")
+      .limit(15)
+      .lean();
 
     if (!posts.length) {
       return res.json({
@@ -27,7 +34,7 @@ router.get("/list", async (req, res) => {
 
 router.post("/form/new_post", async (req, res) => {
   try {
-    const dataFromBody = req.safe.body;
+    const dataFromBody = req.body;
     const posts = new Post({
       title: dataFromBody.title,
       content: dataFromBody.content,

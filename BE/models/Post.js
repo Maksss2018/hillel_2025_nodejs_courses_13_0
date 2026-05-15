@@ -28,5 +28,10 @@ const postSchema = new mongoose.Schema(
     versionKey: "__v",
   },
 );
+postSchema.virtual("posts", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "post",
+});
 
 export default mongoose.model("Post", postSchema);
