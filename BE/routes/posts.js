@@ -5,8 +5,6 @@ import { MESSAGES, STATUS_CODES } from "../common/index.js";
 const router = Router();
 
 router.get("/list", async (req, res) => {
-  //   const escapedCity = city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
   try {
     const posts = await Post.find().limit(15).lean();
 
@@ -29,7 +27,7 @@ router.get("/list", async (req, res) => {
 
 router.post("/form/new_post", async (req, res) => {
   try {
-    const dataFromBody = req.body;
+    const dataFromBody = req.safe.body;
     const posts = new Post({
       title: dataFromBody.title,
       content: dataFromBody.content,
@@ -65,7 +63,7 @@ router.get("/list/of/comments", async (req, res) => {
 
 router.post("/form/new_comment", async (req, res) => {
   try {
-    const dataFromBody = req.body;
+    const dataFromBody = req.safe.body;
     const comment = new Comment({
       text: dataFromBody.text,
       post: dataFromBody.postID,
