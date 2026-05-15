@@ -1,5 +1,6 @@
 import Router from "express";
-import Post from "../models/post.js";
+import Post from "../models/Post.js";
+import Comment from "../models/Comment.js";
 import { MESSAGES, STATUS_CODES } from "../common/index.js";
 const router = Router();
 
@@ -7,18 +8,18 @@ router.get("/list", async (req, res) => {
   //   const escapedCity = city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   try {
-    const posts = await Post.find().limit(15).lean();
+    const comments = await Comment.find().limit(15).lean();
 
-    if (!posts.length) {
+    if (!comments.length) {
       return res.json({
         success: true,
-        posts: [],
+        comments,
       });
     }
-    console.log(posts);
+    console.log(comments);
     res.status(200).json({
       success: true,
-      posts,
+      comments,
     });
   } catch (err) {
     console.error(err);
@@ -26,15 +27,20 @@ router.get("/list", async (req, res) => {
   }
 });
 
-router.post("/form/new_post", async (req, res) => {
+router.post("/form/new_comment", async (req, res) => {
   try {
     const dataFromBody = req.body;
-    const posts = new Post({
-      title: dataFromBody.title,
-      content: dataFromBody.content,
+    const postUpdated = await Post.findByIdAndUpdate(dataFromBody.postID, {
+      $push: { comments: dataFromBody.postID },
     });
-    posts.save();
-    res.status(200).send(posts);
+
+    const comments = new Comment({
+      text: dataFromBody.text,
+      post: dataFromBody.postID,
+    });
+    comments.save();
+
+    res.status(200).send(comments);
   } catch (err) {
     console.error(err);
     res.status(500).send("500");
