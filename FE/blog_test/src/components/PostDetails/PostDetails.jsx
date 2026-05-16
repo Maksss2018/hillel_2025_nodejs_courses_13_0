@@ -1,12 +1,11 @@
 ﻿import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Card, Spinner, Alert, Button } from "react-bootstrap";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+import { Card, Spinner, Alert, Button, ListGroup } from "react-bootstrap";
 
 export default function PostDetails() {
   const { postID } = useParams();
   const [post, setPost] = useState(null);
+  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -18,34 +17,28 @@ export default function PostDetails() {
       setError("");
 
       try {
-        const response = await fetch(`${API_BASE_URL}/posts/list`, {
-          signal: controller.signal,
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_API_BASE_URL}/post/${postID}`,
+          {
+            signal: controller.signal,
+          },
+        );
 
         if (!response.ok) {
-          throw new Error(`Failed to load post details (${response.status})`);
+          throw new Error(`Failed to load post (${response.status})`);
         }
 
         const data = await response.json();
 
-        if (!data || !data.posts) {
-          throw new Error("Invalid post data returned from server.");
+        if (!data?.success || !data.post) {
+          throw new Error(data?.message || "Invalid post response.");
         }
 
-        const foundPost = data.posts.find(
-          (item) => item._id === postID || String(item._id) === String(postID),
-        );
-
-        if (!foundPost) {
-          setError("Post not found.");
-          setPost(null);
-        } else {
-          setPost(foundPost);
-        }
+        setPost(data.post);
+        setComments(data.comments || []);
       } catch (fetchError) {
         if (fetchError.name !== "AbortError") {
           setError(fetchError.message || "Unable to load post details.");
-          setPost(null);
         }
       } finally {
         setLoading(false);
@@ -78,23 +71,43 @@ export default function PostDetails() {
     );
   }
 
+  if (!post) {
+    return (
+      <div className="container py-5">
+        <Alert variant="warning">Post not found.</Alert>
+        <Button as={Link} to="/" variant="primary">
+          Back to posts
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-5">
       <Button as={Link} to="/" variant="secondary" className="mb-4">
         Back to posts
       </Button>
 
-      <Card>
+      <Card className="mb-4">
         <Card.Body>
           <Card.Title>{post.title}</Card.Title>
-          <Card.Subtitle className="mb-3 text-muted">
-            Post ID: {postID}
-          </Card.Subtitle>
           <Card.Text>{post.content}</Card.Text>
-          {post.comments && post.comments.length > 0 && (
-            <Card.Text className="text-muted mt-3">
-              Comments: {post.comments.length}
-            </Card.Text>
+        </Card.Body>
+      </Card>
+
+      <Card>
+        <Card.Body>
+          <Card.Title>Comments</Card.Title>
+          {comments.length === 0 ? (
+            <Alert variant="secondary">No comments yet.</Alert>
+          ) : (
+            <ListGroup as="ol" numbered>
+              {comments.map((comment, index) => (
+                <ListGroup.Item key={`${index}-comments-list`} as="li">
+                  {comment.text}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
           )}
         </Card.Body>
       </Card>

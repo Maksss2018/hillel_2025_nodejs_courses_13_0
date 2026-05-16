@@ -42,6 +42,30 @@ router.post("/form/new_post", async (req, res) => {
   }
 });
 
+router.get("/post/:post_id", async (req, res) => {
+  const postID = req.params.post_id;
+  try {
+    const post = await Post.findById(postID)
+      .populate("comments", "text -_id")
+      .lean();
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      post,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("500");
+  }
+});
+
 router.get("/list/of/comments/:post_id", async (req, res) => {
   const postID = req.params.post_id;
   try {
