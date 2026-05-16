@@ -1,35 +1,43 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
+import { Routes, Route, Link, useParams } from "react-router-dom";
+import ListOfPosts from "./components/ListOFPosts/ListOfPosts";
 import "./App.css";
+
+function Home() {
+  return (
+    <div className="container py-4">
+      <header className="mb-4">
+        <h1>Blog Home</h1>
+        <p>Select a post to view its details.</p>
+      </header>
+      <ListOfPosts />
+    </div>
+  );
+}
+
+function PostDetail() {
+  const { postID } = useParams();
+
+  return (
+    <div className="container py-4">
+      <nav className="mb-3">
+        <Link to="/" className="btn btn-outline-primary btn-sm">
+          Back to posts
+        </Link>
+      </nav>
+      <h1>Post Detail</h1>
+      <p>You are viewing post with ID: <strong>{postID}</strong></p>
+    </div>
+  );
+}
 
 function App() {
   return (
-    <>
-      <section id="center">
-        <div>
-          <h1>title</h1>
-          <p>text</p>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <h2>Documentation</h2>
-          <p>
-            Your questions, answered Lorem ipsum dolor sit amet consectetur
-            adipisicing elit. Odio, molestias amet! Itaque placeat quo tenetur
-            non at blanditiis quos iure hic dolorum quaerat! Non dolore, id
-            blanditiis dolor sequi tempore.
-          </p>
-        </div>
-      </section>
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="post/:postID" element={<PostDetail />} />
+      </Routes>
+    </div>
   );
 }
 

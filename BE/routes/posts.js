@@ -7,10 +7,6 @@ const router = Router();
 router.get("/list", async (req, res) => {
   try {
     const posts = await Post.find()
-      /*.populate({
-        path: "comments",
-        select: "text -_id", // Includes text; explicitly excludes _id
-      })*/
       .populate("comments", "text -_id")
       .limit(15)
       .lean();
@@ -21,7 +17,6 @@ router.get("/list", async (req, res) => {
         posts: [],
       });
     }
-    console.log(posts);
     res.status(200).json({
       success: true,
       posts,
